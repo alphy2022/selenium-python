@@ -1,4 +1,4 @@
-import time
+from datetime import datetime
 
 from selenium import webdriver
 from unittest import TestCase
@@ -30,24 +30,29 @@ class ChromeDriverWindows(TestCase):
         driver.find_element(By.ID, "input-1").send_keys("admin")
         driver.find_element(By.ID, "input-2").clear()
         driver.find_element(By.ID, "input-2").send_keys("password")
+        #click on login
         driver.find_element(By.XPATH, "//*[@id='__layout']/div/div/div[2]/div/div[1]/div[2]/div/div/div[2]/form/div["
                                       "2]/button").click()
+
         layout_wrapper = '//*[@id="layout-wrapper"]/div/div/div/div/div[2]/div[1]/div/div/a'
+        # Waiting for home page is loading
         Newelement = wait.until(EC.visibility_of_element_located((By.XPATH, layout_wrapper)))
         self.assertTrue(Newelement)
+        # click on new notification button
         Newelement.click()
+        # Waiting for loading thew new notification page
         bvElement = wait.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="complaints"]/div/textarea')))
+        #Fill the date
         datrePicker = '//*[@id="notification_date"]/div/div'
         driver.find_element(By.XPATH, datrePicker).click()
         dateCollection = driver.find_elements(By.CLASS_NAME, 'mx-date-row')
-        from datetime import datetime
         today = datetime.today().strftime('%Y-%m-%d')
         for eachField in dateCollection:
             for DateField in eachField.find_elements(By.TAG_NAME, 'td'):
                 if (DateField.get_attribute("title") == today):
                     DateField.click()
                     break
-
+        # Fill property User
         driver.find_element(By.ID, 'property_user').click()
         driver.find_element(By.XPATH, '//*[@id="property_user"]/div/div/div/div[2]/input').send_keys('br')
         wait.until(
@@ -57,7 +62,7 @@ class ChromeDriverWindows(TestCase):
             propert.click()
 
         driver.find_element(By.XPATH, '//*[@id="property_management"]/div/div/div/div[2]/input').click()
-        # driver.find_element(By.zxPATH, '//*[@id="property_management"]/div/div/div/div[2]/input').send_keys('sk')
+
         wait.until(EC.visibility_of_element_located(
             (By.XPATH, '//*[@id="property_management"]/div/div/div[1]/div[3]/ul/li[1]/span/span')))
         driver.find_element(By.XPATH, '//*[@id="property_management"]/div/div/div[1]/div[3]/ul/li[1]/span/span').click()
@@ -77,6 +82,14 @@ class ChromeDriverWindows(TestCase):
         driver.find_element(By.XPATH, '//*[@id="maintenance"]/div/div/div[1]/div[3]/ul/li[1]/span').click()
         self.waitForElementToVisible(driver,
                                                     '//*[@id="layout-wrapper"]/div/div/div/div/div[2]/div/div/form/div/div/div/div[16]/div/button')
+
+
+
+
+
+
+
+
 
 
         wait.until(EC.visibility_of_element_located((By.XPATH, "adsgrthyjkuii")))
