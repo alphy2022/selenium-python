@@ -76,11 +76,11 @@ class ChromeDriverWindows(TestCase):
 
         driver.find_element(By.XPATH, '//*[@id="complaints"]/div/textarea').send_keys('test complaints....')
 
-        self.waitForElementToVisible(driver, '//*[@id="term"]/div/div/div/div[2]/input')
+        self.waitThenScrollAndClick(driver, '//*[@id="term"]/div/div/div/div[2]/input')
         driver.find_element(By.XPATH, '//*[@id="term"]/div/div/div[1]/div[3]/ul/li[1]').click()
-        self.waitForElementToVisible(driver, '//*[@id="maintenance"]/div/div/div[1]/div[2]/input')
+        self.waitThenScrollAndClick(driver, '//*[@id="maintenance"]/div/div/div[1]/div[2]/input')
         driver.find_element(By.XPATH, '//*[@id="maintenance"]/div/div/div[1]/div[3]/ul/li[1]/span').click()
-        self.waitForElementToVisible(driver,
+        self.waitThenScrollAndClick(driver,
                                      '//*[@id="layout-wrapper"]/div/div/div/div/div[2]/div/div/form/div/div/div/div[16]/div/button')
 
         wait.until(EC.presence_of_element_located((By.TAG_NAME, 'table')))
@@ -92,25 +92,32 @@ class ChromeDriverWindows(TestCase):
         Newelement = wait.until(EC.presence_of_element_located((By.XPATH, layout_wrapper)))
         # verify the button
         self.assertTrue(Newelement)
-        self.waitForElementToVisible(driver,
-                                     '//*[contains(text(), "Bridge Global")]')
-        time.sleep(2)
-        self.waitForElementToVisible(driver,
+        accordian = wait.until(EC.presence_of_element_located((By.XPATH, '//a[text()="Bridge Global"]')))
+        collapse_class = accordian.get_attribute("class")
+        if 'not-collapsed' not in collapse_class:
+            self.waitThenScrollAndClick(driver,
+                                     '//a[text()="Bridge Global"]')
+            time.sleep(2)
+        self.waitThenScrollAndClick(driver,
                                      '//*[contains(text(), "Bridge Global")]/ancestor::div[1]/div/div/p/div/div/table/tbody/tr[last()]/td[7]/ul/li/a')
         wait.until(EC.presence_of_element_located((By.ID, 'receipt_number__BV_label_')))
         property_value = wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="property_management"]/div/div/div/div[2]/span[contains(text(), "Skyline Apartments")]')))
         self.assertTrue(property_value)
-        self.waitForElementToVisible(driver, '//a[contains(text(), "Bewerk")]')
+        self.waitThenScrollAndClick(driver, '//a[contains(text(), "Bewerk")]')
         wait.until(EC.presence_of_element_located((By.ID, 'location__BV_label_')))
-        input_field = self.waitForElementToVisible(driver, '//*[@id="budget"]/div/div/input')
-        input_field.send_keys("66965")
+        input_field = self.waitThenScrollAndClick(driver, '//*[@id="budget"]/div/div/input')
+        sample_val = '66965'
+        input_field.send_keys(sample_val)
+        self.waitThenScrollAndClick(driver, '//button[contains(text(), "Bijwerken")]')
+        wait.until(EC.presence_of_element_located((By.ID, 'receipt_number__BV_label_')))
+        val =driver.find_element(By.XPATH, '//*[@id="budget"]/div/div/input').get_attribute('value')
+        self.assertEqual(val, sample_val)
+        time.sleep(2)
+        driver.close()
 
-
-
-        wait.until(EC.visibility_of_element_located((By.XPATH, "adsgrthyjkuii")))
 
     # automate scroll
-    def waitForElementToVisible(self, driver, xpath):
+    def waitThenScrollAndClick(self, driver, xpath):
         header_element = driver.find_element(By.TAG_NAME, 'header')
         additional_header_elem = driver.find_element(By.XPATH, '//*[@id="page-topbar"]/div[2]')
         elem = driver.find_element(By.XPATH, xpath)
