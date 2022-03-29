@@ -1,4 +1,5 @@
 from datetime import datetime
+import time
 
 from selenium import webdriver
 from unittest import TestCase
@@ -30,36 +31,35 @@ class ChromeDriverWindows(TestCase):
         driver.find_element(By.ID, "input-1").send_keys("admin")
         driver.find_element(By.ID, "input-2").clear()
         driver.find_element(By.ID, "input-2").send_keys("password")
-        #click on login
+        # click on login
         driver.find_element(By.XPATH, "//*[@id='__layout']/div/div/div[2]/div/div[1]/div[2]/div/div/div[2]/form/div["
                                       "2]/button").click()
-
+        # xpath of new button
         layout_wrapper = '//*[@id="layout-wrapper"]/div/div/div/div/div[2]/div[1]/div/div/a'
         # Waiting for home page is loading
         Newelement = wait.until(EC.visibility_of_element_located((By.XPATH, layout_wrapper)))
+        # verify the button
         self.assertTrue(Newelement)
         # click on new notification button
         Newelement.click()
         # Waiting for loading thew new notification page
         bvElement = wait.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="complaints"]/div/textarea')))
-        #Fill the date
-        datrePicker = '//*[@id="notification_date"]/div/div'
-        driver.find_element(By.XPATH, datrePicker).click()
-        dateCollection = driver.find_elements(By.CLASS_NAME, 'mx-date-row')
+        # Fill the date
+        datePicker = '//*[@id="notification_date"]/div/div'
+        driver.find_element(By.XPATH, datePicker).click()
+        dateCollection = wait.until(EC.visibility_of_element_located((By.CLASS_NAME, 'mx-table-date')))
+        # dateCollection = driver.find_element(By.CLASS_NAME, 'mx-table-date')
         today = datetime.today().strftime('%Y-%m-%d')
-        for eachField in dateCollection:
-            for DateField in eachField.find_elements(By.TAG_NAME, 'td'):
-                if (DateField.get_attribute("title") == today):
-                    DateField.click()
-                    break
+
+        dateCollection.find_element(By.CSS_SELECTOR, 'td[title^="{}"]'.format(today)).click()
         # Fill property User
         driver.find_element(By.ID, 'property_user').click()
         driver.find_element(By.XPATH, '//*[@id="property_user"]/div/div/div/div[2]/input').send_keys('br')
         wait.until(
             EC.visibility_of_element_located((By.XPATH, '//*[@id="property_user"]/div/div/div/div[3]/ul/li[1]/span')))
-        propert = driver.find_element(By.XPATH, '//*[@id="property_user"]/div/div/div/div[3]/ul/li[1]/span/span')
-        if propert.text == 'Bridge Global':
-            propert.click()
+        property = driver.find_element(By.XPATH, '//*[@id="property_user"]/div/div/div/div[3]/ul/li[1]/span/span')
+        if property.text == 'Bridge Global':
+            property.click()
 
         driver.find_element(By.XPATH, '//*[@id="property_management"]/div/div/div/div[2]/input').click()
 
@@ -81,19 +81,35 @@ class ChromeDriverWindows(TestCase):
         self.waitForElementToVisible(driver, '//*[@id="maintenance"]/div/div/div[1]/div[2]/input')
         driver.find_element(By.XPATH, '//*[@id="maintenance"]/div/div/div[1]/div[3]/ul/li[1]/span').click()
         self.waitForElementToVisible(driver,
-                                                    '//*[@id="layout-wrapper"]/div/div/div/div/div[2]/div/div/form/div/div/div/div[16]/div/button')
+                                     '//*[@id="layout-wrapper"]/div/div/div/div/div[2]/div/div/form/div/div/div/div[16]/div/button')
 
-
-
-
-
-
-
+        wait.until(EC.presence_of_element_located((By.TAG_NAME, 'table')))
+        # home page
+        driver.get("https://premark-demo.bridge-teams.com/")
+        # xpath of new button
+        layout_wrapper = '//*[@id="layout-wrapper"]/div/div/div/div/div[2]/div[1]/div/div/a'
+        # Waiting for home page is loading
+        Newelement = wait.until(EC.presence_of_element_located((By.XPATH, layout_wrapper)))
+        # verify the button
+        self.assertTrue(Newelement)
+        self.waitForElementToVisible(driver,
+                                     '//*[contains(text(), "Bridge Global")]')
+        time.sleep(2)
+        self.waitForElementToVisible(driver,
+                                     '//*[contains(text(), "Bridge Global")]/ancestor::div[1]/div/div/p/div/div/table/tbody/tr[last()]/td[7]/ul/li/a')
+        wait.until(EC.presence_of_element_located((By.ID, 'receipt_number__BV_label_')))
+        property_value = wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="property_management"]/div/div/div/div[2]/span[contains(text(), "Skyline Apartments")]')))
+        self.assertTrue(property_value)
+        self.waitForElementToVisible(driver, '//a[contains(text(), "Bewerk")]')
+        wait.until(EC.presence_of_element_located((By.ID, 'location__BV_label_')))
+        input_field = self.waitForElementToVisible(driver, '//*[@id="budget"]/div/div/input')
+        input_field.send_keys("66965")
 
 
 
         wait.until(EC.visibility_of_element_located((By.XPATH, "adsgrthyjkuii")))
 
+    # automate scroll
     def waitForElementToVisible(self, driver, xpath):
         header_element = driver.find_element(By.TAG_NAME, 'header')
         additional_header_elem = driver.find_element(By.XPATH, '//*[@id="page-topbar"]/div[2]')
@@ -101,6 +117,7 @@ class ChromeDriverWindows(TestCase):
         scroll_y_by = (elem.location_once_scrolled_into_view['y'] - (
                 header_element.size['height'] + additional_header_elem.size['height']))
         driver.execute_script("window.scrollBy(0, arguments[0]);", scroll_y_by)
+        current_element = None
         while True:
             try:
                 current_element = WebDriverWait(driver, 455).until(EC.presence_of_element_located((By.XPATH, xpath)))
@@ -108,7 +125,7 @@ class ChromeDriverWindows(TestCase):
                 break
             except ElementClickInterceptedException:
                 continue
-        return elem
+        return current_element
 
 obj = ChromeDriverWindows()
 obj.site_login()
