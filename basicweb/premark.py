@@ -13,7 +13,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 
 
 class ChromeDriverWindows(TestCase):
-    def site_login(self):
+    def siteMethod(self):
         # Invalid Login case
         driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
         driver.maximize_window()
@@ -48,10 +48,9 @@ class ChromeDriverWindows(TestCase):
         datePicker = '//*[@id="notification_date"]/div/div'
         driver.find_element(By.XPATH, datePicker).click()
         dateCollection = wait.until(EC.visibility_of_element_located((By.CLASS_NAME, 'mx-table-date')))
-        # dateCollection = driver.find_element(By.CLASS_NAME, 'mx-table-date')
         today = datetime.today().strftime('%Y-%m-%d')
-
         dateCollection.find_element(By.CSS_SELECTOR, 'td[title^="{}"]'.format(today)).click()
+
         # Fill property User
         driver.find_element(By.ID, 'property_user').click()
         driver.find_element(By.XPATH, '//*[@id="property_user"]/div/div/div/div[2]/input').send_keys('br')
@@ -60,20 +59,19 @@ class ChromeDriverWindows(TestCase):
         property = driver.find_element(By.XPATH, '//*[@id="property_user"]/div/div/div/div[3]/ul/li[1]/span/span')
         if property.text == 'Bridge Global':
             property.click()
-
+        #fill property management
         driver.find_element(By.XPATH, '//*[@id="property_management"]/div/div/div/div[2]/input').click()
-
         wait.until(EC.visibility_of_element_located(
             (By.XPATH, '//*[@id="property_management"]/div/div/div[1]/div[3]/ul/li[1]/span/span')))
         driver.find_element(By.XPATH, '//*[@id="property_management"]/div/div/div[1]/div[3]/ul/li[1]/span/span').click()
-
+        #fill contact person detail
         driver.find_element(By.XPATH, '//*[@id="reporter_name"]/div/input').send_keys('tester')
-
+        #fill location
         driver.find_element(By.XPATH, '//*[@id="location"]/div/input').send_keys('kochi')
-
+        #fill type of complaint
         driver.find_element(By.XPATH, '//*[@id="type_of_complaint"]/div/div/div/div[2]/input').click()
         driver.find_element(By.XPATH, '//*[@id="type_of_complaint"]/div/div/div/div[3]/ul/li[1]/span').click()
-
+        #fill complaint details
         driver.find_element(By.XPATH, '//*[@id="complaints"]/div/textarea').send_keys('test complaints....')
 
         self.waitThenScrollAndClick(driver, '//*[@id="term"]/div/div/div/div[2]/input')
@@ -106,10 +104,12 @@ class ChromeDriverWindows(TestCase):
         self.waitThenScrollAndClick(driver, '//a[contains(text(), "Bewerk")]')
         wait.until(EC.presence_of_element_located((By.ID, 'location__BV_label_')))
         input_field = self.waitThenScrollAndClick(driver, '//*[@id="budget"]/div/div/input')
-        sample_val = '66965'
+        sample_val = '66965.00'
         input_field.send_keys(sample_val)
         self.waitThenScrollAndClick(driver, '//button[contains(text(), "Bijwerken")]')
+
         wait.until(EC.presence_of_element_located((By.ID, 'receipt_number__BV_label_')))
+        time.sleep(2)
         val =driver.find_element(By.XPATH, '//*[@id="budget"]/div/div/input').get_attribute('value')
         self.assertEqual(val, sample_val)
         time.sleep(2)
@@ -135,4 +135,4 @@ class ChromeDriverWindows(TestCase):
         return current_element
 
 obj = ChromeDriverWindows()
-obj.site_login()
+obj.siteMethod()
