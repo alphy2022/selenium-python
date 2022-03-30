@@ -59,19 +59,19 @@ class ChromeDriverWindows(TestCase):
         property = driver.find_element(By.XPATH, '//*[@id="property_user"]/div/div/div/div[3]/ul/li[1]/span/span')
         if property.text == 'Bridge Global':
             property.click()
-        #fill property management
+        # fill property management
         driver.find_element(By.XPATH, '//*[@id="property_management"]/div/div/div/div[2]/input').click()
         wait.until(EC.visibility_of_element_located(
             (By.XPATH, '//*[@id="property_management"]/div/div/div[1]/div[3]/ul/li[1]/span/span')))
         driver.find_element(By.XPATH, '//*[@id="property_management"]/div/div/div[1]/div[3]/ul/li[1]/span/span').click()
-        #fill contact person detail
+        # fill contact person detail
         driver.find_element(By.XPATH, '//*[@id="reporter_name"]/div/input').send_keys('tester')
-        #fill location
+        # fill location
         driver.find_element(By.XPATH, '//*[@id="location"]/div/input').send_keys('kochi')
-        #fill type of complaint
+        # fill type of complaint
         driver.find_element(By.XPATH, '//*[@id="type_of_complaint"]/div/div/div/div[2]/input').click()
         driver.find_element(By.XPATH, '//*[@id="type_of_complaint"]/div/div/div/div[3]/ul/li[1]/span').click()
-        #fill complaint details
+        # fill complaint details
         driver.find_element(By.XPATH, '//*[@id="complaints"]/div/textarea').send_keys('test complaints....')
 
         self.waitThenScrollAndClick(driver, '//*[@id="term"]/div/div/div/div[2]/input')
@@ -79,7 +79,7 @@ class ChromeDriverWindows(TestCase):
         self.waitThenScrollAndClick(driver, '//*[@id="maintenance"]/div/div/div[1]/div[2]/input')
         driver.find_element(By.XPATH, '//*[@id="maintenance"]/div/div/div[1]/div[3]/ul/li[1]/span').click()
         self.waitThenScrollAndClick(driver,
-                                     '//*[@id="layout-wrapper"]/div/div/div/div/div[2]/div/div/form/div/div/div/div[16]/div/button')
+                                    '//*[@id="layout-wrapper"]/div/div/div/div/div[2]/div/div/form/div/div/div/div[16]/div/button')
 
         wait.until(EC.presence_of_element_located((By.TAG_NAME, 'table')))
         # home page
@@ -94,12 +94,13 @@ class ChromeDriverWindows(TestCase):
         collapse_class = accordian.get_attribute("class")
         if 'not-collapsed' not in collapse_class:
             self.waitThenScrollAndClick(driver,
-                                     '//a[text()="Bridge Global"]')
+                                        '//a[text()="Bridge Global"]')
             time.sleep(2)
         self.waitThenScrollAndClick(driver,
-                                     '//*[contains(text(), "Bridge Global")]/ancestor::div[1]/div/div/p/div/div/table/tbody/tr[last()]/td[7]/ul/li/a')
+                                    '//*[contains(text(), "Bridge Global")]/ancestor::div[1]/div/div/p/div/div/table/tbody/tr[last()]/td[7]/ul/li/a')
         wait.until(EC.presence_of_element_located((By.ID, 'receipt_number__BV_label_')))
-        property_value = wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="property_management"]/div/div/div/div[2]/span[contains(text(), "Skyline Apartments")]')))
+        property_value = wait.until(EC.presence_of_element_located((By.XPATH,
+                                                                    '//*[@id="property_management"]/div/div/div/div[2]/span[contains(text(), "Skyline Apartments")]')))
         self.assertTrue(property_value)
         self.waitThenScrollAndClick(driver, '//a[contains(text(), "Bewerk")]')
         wait.until(EC.presence_of_element_located((By.ID, 'location__BV_label_')))
@@ -110,11 +111,10 @@ class ChromeDriverWindows(TestCase):
 
         wait.until(EC.presence_of_element_located((By.ID, 'receipt_number__BV_label_')))
         time.sleep(2)
-        val =driver.find_element(By.XPATH, '//*[@id="budget"]/div/div/input').get_attribute('value')
+        val = driver.find_element(By.XPATH, '//*[@id="budget"]/div/div/input').get_attribute('value')
         self.assertEqual(val, sample_val)
         time.sleep(2)
         driver.close()
-
 
     # automate scroll
     def waitThenScrollAndClick(self, driver, xpath):
@@ -133,6 +133,7 @@ class ChromeDriverWindows(TestCase):
             except ElementClickInterceptedException:
                 continue
         return current_element
+
 
 obj = ChromeDriverWindows()
 obj.siteMethod()
